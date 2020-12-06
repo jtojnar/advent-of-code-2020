@@ -9,7 +9,7 @@ clusterPassports :: [String] -> [[String]]
 clusterPassports =
     let
         addPassport "" ps = []:ps
-        addPassport line [] = []
+        addPassport line [] = [[line]]
         addPassport line (p:ps) = (p ++ words line):ps
     in
         foldr addPassport []
