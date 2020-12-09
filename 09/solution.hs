@@ -1,4 +1,5 @@
 import Data.List (find)
+import Data.Maybe (mapMaybe)
 
 takeWhileChanges :: Eq a => [a] -> [a]
 takeWhileChanges xs = map fst (takeWhile (uncurry (/=)) (zip xs (drop 1 xs)))
@@ -29,7 +30,27 @@ findInvalid =
     in
         find (\(windowValids, num:numbers') -> not (num `elem` getValids windowValids))
 
+minPlusMax :: [Int] -> Int
+minPlusMax xs = minimum xs + maximum xs
+
+findSumSequence :: Int -> [Int] -> [Int]
+findSumSequence target =
+    let
+        findSumSequence' :: Int -> [Int] -> [Int] -> Maybe [Int]
+        findSumSequence' current result [] = Nothing
+        findSumSequence' current result (x:xs) =
+            if current + x == target then
+                Just (x:result)
+            else if current + x <= target then
+                findSumSequence' (current + x) (x:result) xs
+            else
+                Nothing
+    in
+        head . mapMaybe (findSumSequence' 0 []) . iterate (drop 1)
+
 main :: IO ()
 main = do
     numbers <- map read . lines <$> readFile "input"
-    print (fmap (head . snd) (findInvalid (computeValids 25 numbers)))
+    let Just a = fmap (head . snd) (findInvalid (computeValids 25 numbers))
+    print a
+    print (minPlusMax (findSumSequence a numbers))
