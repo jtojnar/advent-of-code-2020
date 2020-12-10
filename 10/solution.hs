@@ -9,10 +9,12 @@ valid adapters =
     let
         valid' 0 = 1
         valid' n | n < 0 = 0
-        valid' n = if n `elem` adapters then valid' (n-1) + valid' (n-2) + valid' (n-3) else 0
-        valids = map valid' [0..2] ++ map (\n -> if n `elem` adapters then valids !! (n-1) + valids !! (n-2) + valids !! (n-3) else 0) [3..]
+        valid' n = if n `elem` adapters then valid'' (n-1) + valid'' (n-2) + valid'' (n-3) else 0
+        valid'' n | n >= 2 = valids !! n
+        valid'' n = valid' n
+        valids = map valid' [0..]
     in
-        (valids !!)
+        valid'
 
 main :: IO ()
 main = do
