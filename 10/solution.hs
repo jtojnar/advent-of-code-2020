@@ -5,8 +5,14 @@ count True = 1
 count False = 0
 
 valid :: [Int] -> Int -> Int
-valid adapters 0 = 1
-valid adapters n = if n `elem` adapters then valid adapters (n-1) + valid adapters (n-2) + valid adapters (n-3) else 0
+valid adapters =
+    let
+        valid' 0 = 1
+        valid' n | n < 0 = 0
+        valid' n = if n `elem` adapters then valid' (n-1) + valid' (n-2) + valid' (n-3) else 0
+        valids = map valid' [0..2] ++ map (\n -> if n `elem` adapters then valids !! (n-1) + valids !! (n-2) + valids !! (n-3) else 0) [3..]
+    in
+        (valids !!)
 
 main :: IO ()
 main = do
